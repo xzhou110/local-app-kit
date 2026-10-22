@@ -7,13 +7,13 @@ repo: https://github.com/xzhou110/local-app-kit
 updated: 2026-10-22
 category: ai-tooling
 phase: building
-next: migrate ai-usage-tracker to v0.1.0 behind its own npm run check, then creator-advisors, career-center and x-command-center in that order
+next: migrate creator-advisors to v0.1.0 (security.ts, static.ts, main.ts) behind its own npm run check, then career-center, then x-command-center
 ---
 
 # Local App Kit
 
 ## 1. Summary
-Four private local apps (career-center, ai-usage-tracker, creator-advisors, x-command-center) ran the same runtime from their own copies: six atomic-write helpers, two full servers with ETag, lock and Host checks, two `security.ts` files copied from the `local-private-app` skill and diverged. Principle 10 of the engineering standard says the third consumer earns a shared package. This is it: one TypeScript package with its own tests and a parity suite that proves, over a real socket, every behaviour the four apps rely on, released as a `v<version>` tag that each app pins as a git dependency. Status: v0.1.0 being cut; the first migration (ai-usage-tracker) follows in the same session.
+Four private local apps (career-center, ai-usage-tracker, creator-advisors, x-command-center) ran the same runtime from their own copies: six atomic-write helpers, two full servers with ETag, lock and Host checks, two `security.ts` files copied from the `local-private-app` skill and diverged. Principle 10 of the engineering standard says the third consumer earns a shared package. This is it: one TypeScript package with its own tests and a parity suite that proves, over a real socket, every behaviour the four apps rely on, released as a `v<version>` tag that each app pins as a git dependency. Status: v0.1.0 released on 2026-10-22 and consumed by ai-usage-tracker (its server runtime, verified by its check, its GitHub gate and its real Start-entry launch); three consumers to go.
 
 ## 2. Key facts
 | | |
@@ -54,10 +54,10 @@ local-app-kit/
 Edit `src/` → `npm run check` → commit (with `dist/`) → push (the global pre-push hook runs `check` again; GitHub Actions runs it on every push). A behaviour an app relies on gets its row in the parity suite before the app migrates. To release: write the Unreleased lines in `CHANGELOG.md`, `npm version <patch|minor|major>`, `git push --follow-tags`. To migrate an app: make its `npm run check` real first, add the dependency pinned to the tag, swap one module at a time behind green tests, delete the old file, write the app's `DECISIONS.md` entry, check its everyday launch, push.
 
 ### Current state & open items
-v0.1.0: 64 tests green on this machine (module tests and the parity suite). Consumers, in order, each one its own session of small commits: ai-usage-tracker (in progress), creator-advisors (`security.ts`, `static.ts`, `main.ts`), career-center (`server/fs.ts`, `security.ts`, `static.ts`, the lock in `main.ts`; the private-data app, deeper review tier), x-command-center (JavaScript: the four atomic helpers and the Host and Origin check; its allow-listed static routes, service identity and collection lock stay). Later candidates: the browser client, the Electron shell commons, the launchers. Open questions for the owner: a license for the public repository (today `UNLICENSED`); Dependabot security updates are a repository setting to switch on once.
+v0.1.0: 64 tests green locally, in a fresh clone and in the GitHub gate; installed from the tag into a scratch consumer under Node 24 and TypeScript 7 and 6. **Migrated:** ai-usage-tracker (2026-10-22: `server/atomic.ts` and `server/lock.ts` removed, `server/http.ts` on the kit's guards, body reader, SSE hub, static handler and listener; 88 tests, its GitHub `check` run fetched the pinned tag on a clean runner, the Start-entry launch, repeat launch and stale-lock recovery verified live). **Open, in this order, each its own session of small commits:** creator-advisors (`server/security.ts`, `static.ts`, `main.ts`; read-only, four server tests as the acceptance; its `npm run check` must be made real first), career-center (`server/fs.ts`, `security.ts`, `static.ts`, the lock in `main.ts`; the private-data app, deeper review tier; its static test expects 404 for `/%2e%2e/x`, which becomes 400), x-command-center (JavaScript: the four atomic helpers and the Host and Origin check; its allow-listed static routes, service identity and collection lock stay). Later candidates: the browser client, the Electron shell commons, the launchers. Open for the owner: a license for the public repository (today `UNLICENSED`); lint in the TypeScript 7 apps (typescript-eslint supports below 6.1) is a fleet-wide choice. Dependabot alerts and security updates are switched on for this repository; its first grouped update pull requests arrived on creation and are the owner's to merge after a green check.
 
 ### Change highlights
-- 2026-10-22 — Project set up; the plan approved (option A: git dependency pinned to a tag, public repository, committed `dist/`); the kit written from the four copies with 64 tests including the parity suite; v0.1.0 cut.
+- 2026-10-22 — Project set up; the plan approved (option A: git dependency pinned to a tag, public repository, committed `dist/`); the kit written from the four copies with 64 tests including the parity suite; v0.1.0 cut, the repository made public after a clean history scan; ai-usage-tracker migrated and verified live.
 
 ## 5. Pointers
 - [README.md](README.md) — install, use, the modules, behaviour notes, release and upkeep
