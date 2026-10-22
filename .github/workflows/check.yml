@@ -1,0 +1,42 @@
+# The gate (principle 8, D:/Meaningful/AI/agent-skills/rules/engineering-principles.md): every push and pull request
+# runs `npm run check`. A deploy job in the same or another workflow depends on it with `needs: check`, so nothing
+# ships red. Copy to .github/workflows/check.yml; when the app lives in app/, set working-directory and the lockfile
+# path as the comments say. Pin node-version to the project's `engines` field (the machine runs Node 24).
+name: check
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .            # app/ when package.json lives there
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json   # app/package-lock.json when the app lives in app/
+      - run: npm ci
+      - run: npm run check
+
+  # Known vulnerabilities in the dependencies that ship (devDependencies left out, high severity and up). This job
+  # reports and never gates: deploy jobs depend on `check` only, and the fix arrives as a Dependabot pull request.
+  audit:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: .            # app/ when package.json lives there
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json   # app/package-lock.json when the app lives in app/
+      - run: npm ci
+      - run: npm run audit:deps

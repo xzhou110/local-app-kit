@@ -1,0 +1,90 @@
+{
+  "name": "@xuseak/local-app-kit",
+  "version": "0.0.0",
+  "description": "The runtime shared by XuSeak's private local apps: atomic JSON writes with ETags, localhost-only HTTP guards, a guarded static handler, one SSE hub and the single-instance server lock.",
+  "license": "UNLICENSED",
+  "private": false,
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xzhou110/local-app-kit.git"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "files": [
+    "dist",
+    "src",
+    "!src/**/*.test.ts",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./atomic-write": {
+      "types": "./dist/atomic-write.d.ts",
+      "default": "./dist/atomic-write.js"
+    },
+    "./etag": {
+      "types": "./dist/etag.d.ts",
+      "default": "./dist/etag.js"
+    },
+    "./json-body": {
+      "types": "./dist/json-body.d.ts",
+      "default": "./dist/json-body.js"
+    },
+    "./request-target": {
+      "types": "./dist/request-target.d.ts",
+      "default": "./dist/request-target.js"
+    },
+    "./safe-path": {
+      "types": "./dist/safe-path.d.ts",
+      "default": "./dist/safe-path.js"
+    },
+    "./security": {
+      "types": "./dist/security.d.ts",
+      "default": "./dist/security.js"
+    },
+    "./serve": {
+      "types": "./dist/serve.d.ts",
+      "default": "./dist/serve.js"
+    },
+    "./server-lock": {
+      "types": "./dist/server-lock.d.ts",
+      "default": "./dist/server-lock.js"
+    },
+    "./sse": {
+      "types": "./dist/sse.d.ts",
+      "default": "./dist/sse.js"
+    },
+    "./static-handler": {
+      "types": "./dist/static-handler.d.ts",
+      "default": "./dist/static-handler.js"
+    },
+    "./watch": {
+      "types": "./dist/watch.d.ts",
+      "default": "./dist/watch.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "node --test \"src/**/*.test.ts\" \"parity/**/*.test.ts\"",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run lint && npm run typecheck && npm test && npm run build && node scripts/check-dist.mjs",
+    "audit:deps": "npm audit --omit=dev --audit-level=high",
+    "version": "node scripts/changelog-release.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.0"
+  }
+}

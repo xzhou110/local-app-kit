@@ -1,0 +1,25 @@
+# Dependency upkeep (principle 10, D:/Meaningful/AI/agent-skills/rules/engineering-principles.md): once a month
+# Dependabot opens one grouped pull request for the minor and patch updates of the npm packages and one for the
+# GitHub Actions this repository uses; a major update arrives as its own pull request. The check.yml gate tests
+# every one of them, so merging is a review of a green run, not a leap. Laid down by the engineering-audit skill's
+# apply script; the directory is where package.json lives.
+#
+# Known-vulnerability fixes are a repository setting, not this file. Once per repository, enable Dependabot alerts
+# and security updates (Settings > Code security and analysis), or from the terminal:
+#   gh api -X PUT repos/<owner>/<repo>/vulnerability-alerts
+#   gh api -X PUT repos/<owner>/<repo>/automated-security-fixes
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
