@@ -1,6 +1,6 @@
 {
   "name": "@xuseak/local-app-kit",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "The runtime shared by XuSeak's private local apps: atomic JSON writes with ETags, localhost-only HTTP guards, a guarded static handler, one SSE hub and the single-instance server lock.",
   "license": "UNLICENSED",
   "private": false,
